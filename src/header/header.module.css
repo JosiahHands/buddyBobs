@@ -1,19 +1,13 @@
 .header {
   display: flex;
-  flex-direction: column;
-  gap: 32px;
-  padding: 24px 16px 8px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-}
-
-.top {
-  display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .brand {
@@ -38,14 +32,28 @@
   font-weight: 700;
 }
 
-.links {
+.account {
   display: flex;
-  gap: 32px;
-  padding-right: 12px;
+  align-items: center;
+  gap: 12px;
+}
+
+.user {
   font-size: 14px;
   color: var(--muted);
 }
 
-.links a:hover {
-  color: var(--text);
+.button {
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-text);
+  background: var(--accent);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.button:hover {
+  opacity: 0.85;
 }

@@ -1,12 +1,70 @@
+/* Shrink to the card instead of stretching to fill the grid cell */
 .ad {
-  padding: 40px 28px;
+  align-self: start;
+  justify-self: start;
+  padding: 12px;
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
 
-.label {
+.card {
+  display: block;
+  max-width: 360px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.body {
+  padding: 10px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.text {
+  margin-top: 4px;
   font-size: 13px;
-  font-weight: 600;
+  line-height: 1.35;
+}
+
+.small {
+  margin-top: 6px;
+  font-size: 12px;
   color: var(--muted);
+}
+
+/* Orange and brown from the game's logo lettering */
+.button {
+  display: block;
+  margin-top: 10px;
+  padding: 6px 0;
+  background: #f7a21b;
+  color: #3b1f05;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.card:hover .button {
+  background: #ffb43a;
+}
+
+.domain {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
 }

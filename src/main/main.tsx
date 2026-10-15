@@ -1,54 +1,104 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store.ts'
-import { fetchHomePosts } from './postsSlice.ts'
+import { fetchHomePosts, fetchMorePosts, voteOnPost } from './postsSlice.ts'
+import Comments from '../comments/comments.tsx'
+import Votes from '../votes/votes.tsx'
+import { getPostImage } from '../lemmy/postImage.ts'
+import { timeAgo } from '../utils/timeAgo.ts'
 import styles from './main.module.css'
-
-// Turns an ISO timestamp into a short age like "5m", "3h" or "2d"
-function timeAgo(published: string) {
-  const minutes = Math.floor((Date.now() - new Date(published).getTime()) / 60000)
-  if (minutes < 60) return `${minutes}m`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h`
-  return `${Math.floor(hours / 24)}d`
-}
 
 function Main() {
   const dispatch = useAppDispatch()
-  const { items: posts, status, error } = useAppSelector((state) => state.posts)
+  const { items: posts, nextPage, status, moreStatus, error } = useAppSelector(
+    (state) => state.posts,
+  )
+  const jwt = useAppSelector((state) => state.auth.jwt)
+  const [hasLoadedMore, setHasLoadedMore] = useState(false)
 
+  // Reload on login/logout so the feed shows that user's votes
   useEffect(() => {
     dispatch(fetchHomePosts())
-  }, [dispatch])
+  }, [dispatch, jwt])
 
-  let subtitle = 'Latest posts'
-  if (status === 'loading') subtitle = 'Loading…'
-  if (status === 'failed') subtitle = `Couldn’t load posts: ${error}`
+  function viewMore() {
+    if (!nextPage) return
+    dispatch(fetchMorePosts(nextPage))
+    setHasLoadedMore(true)
+  }
+
+  function backToTop() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
+  }
+
+  let feedStatus = null
+  if (status === 'loading') feedStatus = 'Loading…'
+  if (status === 'failed') feedStatus = `Couldn’t load posts: ${error}`
 
   return (
     <main className={styles.main}>
       <div className={styles.head}>
-        <div>
-          <h1 className={styles.title}>Home</h1>
-          <p className={styles.subtitle}>{subtitle}</p>
-        </div>
-        <div className={styles.controls}>
-          <button type="button" className={styles.control}>Filter</button>
-          <button type="button" className={styles.control}>Sort</button>
-        </div>
+        <h1 className={styles.title}>Latest posts</h1>
+        {feedStatus && <p className={styles.subtitle}>{feedStatus}</p>}
       </div>
       <ul className={styles.feed}>
-        {posts.map(({ post, creator, community }) => (
-          <li key={post.id}>
-            <article className={styles.post}>
-              <p className={styles.meta}>
-                c/{community.name} · @{creator.name} · {timeAgo(post.published)}
-              </p>
-              <h2 className={styles.postTitle}>{post.name}</h2>
-              {post.body && <p className={styles.text}>{post.body}</p>}
-            </article>
-          </li>
-        ))}
+        {posts.map((postView) => {
+          const { post, creator, community, counts } = postView
+          const image = getPostImage(postView)
+          return (
+            <li key={post.id}>
+              <article className={styles.post}>
+                <p className={styles.meta}>
+                  c/{community.name} · @{creator.name} · {timeAgo(post.published)}
+                </p>
+                <h2 className={styles.postTitle}>{post.name}</h2>
+                {image && (
+                  <img
+                    className={styles.image}
+                    src={image.src}
+                    alt={image.alt}
+                    width={image.width}
+                    height={image.height}
+                    loading="lazy"
+                    // Some images live on other servers that may be down
+                    onError={(e) => (e.currentTarget.hidden = true)}
+                  />
+                )}
+                {post.body && <p className={styles.text}>{post.body}</p>}
+                <Comments postId={post.id} count={counts.comments}>
+                  <Votes
+                    score={counts.score}
+                    myVote={postView.my_vote}
+                    onVote={(score) => dispatch(voteOnPost({ postId: post.id, score })).unwrap()}
+                  />
+                </Comments>
+              </article>
+            </li>
+          )
+        })}
       </ul>
+      {status === 'succeeded' && (
+        <div className={styles.more}>
+          {nextPage && (
+            <button
+              type="button"
+              className={styles.control}
+              onClick={viewMore}
+              disabled={moreStatus === 'loading'}
+            >
+              {moreStatus === 'loading' ? 'Loading…' : 'View more'}
+            </button>
+          )}
+          {hasLoadedMore && (
+            <button type="button" className={styles.control} onClick={backToTop}>
+              Back to top
+            </button>
+          )}
+          {moreStatus === 'failed' && (
+            <p className={styles.subtitle}>Couldn’t load more posts: {error}</p>
+          )}
+        </div>
+      )}
     </main>
   )
 }
