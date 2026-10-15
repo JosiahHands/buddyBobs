@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from '../store.ts'
 import { fetchHomePosts, fetchMorePosts, voteOnPost } from './postsSlice.ts'
 import Comments from '../comments/comments.tsx'
 import Votes from '../votes/votes.tsx'
+import CreatePost from '../createPost/createPost.tsx'
 import { getPostImage } from '../lemmy/postImage.ts'
 import { timeAgo } from '../utils/timeAgo.ts'
 import styles from './main.module.css'
@@ -38,8 +39,11 @@ function Main() {
   return (
     <main className={styles.main}>
       <div className={styles.head}>
-        <h1 className={styles.title}>Latest posts</h1>
-        {feedStatus && <p className={styles.subtitle}>{feedStatus}</p>}
+        <div>
+          <h1 className={styles.title}>Latest posts</h1>
+          {feedStatus && <p className={styles.subtitle}>{feedStatus}</p>}
+        </div>
+        <CreatePost />
       </div>
       <ul className={styles.feed}>
         {posts.map((postView) => {

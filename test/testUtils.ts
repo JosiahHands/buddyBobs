@@ -8,6 +8,7 @@ import { makeStore, type RootState } from '../src/store.ts'
 import type { PostView } from '../src/lemmy/homePost.ts'
 import type { CommentView } from '../src/lemmy/postComments.ts'
 import type { SiteView } from '../src/lemmy/siteInfo.ts'
+import type { CommunityView } from '../src/lemmy/createPost.ts'
 
 // Render inside a fresh Redux store, optionally starting from some state
 export function renderWithStore(ui: ReactElement, preloadedState?: Partial<RootState>) {
@@ -84,6 +85,25 @@ export function makeComment(id: number, path: string, overrides: Partial<Comment
     },
     creator: { name: `commenter${id}` },
     counts: { score: 1, child_count: 0 },
+  }
+}
+
+export function makeCommunity(
+  id: number,
+  name: string,
+  overrides: Partial<CommunityView['community']> = {},
+): CommunityView {
+  return {
+    community: {
+      id,
+      name,
+      title: name,
+      actor_id: `https://lemmy.world/c/${name}`,
+      local: true,
+      posting_restricted_to_mods: false,
+      ...overrides,
+    },
+    counts: { subscribers: 1000 * id },
   }
 }
 

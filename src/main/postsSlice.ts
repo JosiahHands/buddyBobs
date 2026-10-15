@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getHomePosts, votePost, type PostView } from '../lemmy/homePost.ts'
+import { createPost, type NewPost } from '../lemmy/createPost.ts'
 import { postComment } from '../comments/commentsSlice.ts'
 import { requireJwt } from '../login/authSlice.ts'
 import type { RootState } from '../store.ts'
@@ -38,6 +39,10 @@ export const fetchMorePosts = createAsyncThunk(
     // Ignore extra clicks while a page is already loading
     condition: (_, { getState }) => (getState() as RootState).posts.moreStatus !== 'loading',
   },
+)
+
+export const publishPost = createAsyncThunk('posts/publish', (post: NewPost, { getState }) =>
+  createPost(requireJwt(getState()), post),
 )
 
 export const voteOnPost = createAsyncThunk(
@@ -79,6 +84,10 @@ const postsSlice = createSlice({
       .addCase(fetchMorePosts.rejected, (state, action) => {
         state.moreStatus = 'failed'
         state.error = action.error.message ?? 'Something went wrong'
+      })
+      // The user's new post goes at the top so they can see it worked
+      .addCase(publishPost.fulfilled, (state, action) => {
+        state.items.unshift(action.payload)
       })
       // Lemmy sends back the post with its new score and the user's vote
       .addCase(voteOnPost.fulfilled, (state, action) => {

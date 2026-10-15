@@ -149,3 +149,81 @@ describe('Comments', () => {
     expect(loads).toHaveLength(2)
   })
 })
+
+describe('Replying', () => {
+  it('only offers Reply to logged-in users, and not on deleted or removed comments', async () => {
+    mockFetch(commentsReply())
+    const { user } = renderWithStore(<Comments postId={7} count={4} />, loggedIn())
+    await user.click(screen.getByRole('button', { name: 'View comments (4)' }))
+    await screen.findByText('Comment 1')
+
+    // Comments 1 and 2 can be replied to; 3 (deleted) and 4 (removed) can't
+    expect(screen.getAllByRole('button', { name: 'Reply' })).toHaveLength(2)
+  })
+
+  it('hides Reply when logged out', async () => {
+    mockFetch(commentsReply())
+    const { user } = renderWithStore(<Comments postId={7} count={4} />)
+    await user.click(screen.getByRole('button', { name: 'View comments (4)' }))
+    await screen.findByText('Comment 1')
+
+    expect(screen.queryByRole('button', { name: 'Reply' })).not.toBeInTheDocument()
+  })
+
+  it('posts a reply that shows up nested under the comment', async () => {
+    const fetchMock = mockFetch((url) =>
+      url.includes('comment/list')
+        ? { body: { comments: [makeComment(1, '0.1')] } }
+        : { body: { comment_view: makeComment(5, '0.1.5', { content: 'Totally agree' }) } },
+    )
+    const { user } = renderWithStore(<Comments postId={7} count={1} />, loggedIn())
+    await user.click(screen.getByRole('button', { name: 'View comments (1)' }))
+    await screen.findByText('Comment 1')
+
+    await user.click(screen.getByRole('button', { name: 'Reply' }))
+    const box = screen.getByRole('textbox', { name: 'Reply to @commenter1' })
+    expect(box).toHaveFocus()
+    await user.type(box, 'Totally agree')
+    await user.click(screen.getByRole('button', { name: 'Post reply' }))
+
+    const parent = screen.getByText('Comment 1').closest('li') as HTMLElement
+    expect(await within(parent).findByText('Totally agree')).toBeInTheDocument()
+    expect(screen.queryByRole('textbox', { name: 'Reply to @commenter1' })).not.toBeInTheDocument()
+    expect(requestTo(fetchMock, 'comment')?.body).toEqual({ post_id: 7, content: 'Totally agree', parent_id: 1 })
+  })
+
+  it('keeps the reply box open and explains when a reply fails', async () => {
+    mockFetch((url) =>
+      url.includes('comment/list')
+        ? { body: { comments: [makeComment(1, '0.1')] } }
+        : { status: 400, body: { error: 'max_comment_depth_reached' } },
+    )
+    const { user } = renderWithStore(<Comments postId={7} count={1} />, loggedIn())
+    await user.click(screen.getByRole('button', { name: 'View comments (1)' }))
+    await screen.findByText('Comment 1')
+
+    await user.click(screen.getByRole('button', { name: 'Reply' }))
+    await user.type(screen.getByRole('textbox', { name: 'Reply to @commenter1' }), 'Deep thought')
+    await user.click(screen.getByRole('button', { name: 'Post reply' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('This thread is too deep to reply to.')
+    expect(screen.getByRole('textbox', { name: 'Reply to @commenter1' })).toHaveValue('Deep thought')
+  })
+
+  it('closes the reply box with Cancel or by clicking Reply again', async () => {
+    mockFetch(commentsReply([makeComment(1, '0.1')]))
+    const { user } = renderWithStore(<Comments postId={7} count={1} />, loggedIn())
+    await user.click(screen.getByRole('button', { name: 'View comments (1)' }))
+    await screen.findByText('Comment 1')
+    const replyButton = screen.getByRole('button', { name: 'Reply' })
+
+    await user.click(replyButton)
+    expect(replyButton).toHaveAttribute('aria-expanded', 'true')
+    await user.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.queryByRole('textbox', { name: 'Reply to @commenter1' })).not.toBeInTheDocument()
+
+    await user.click(replyButton)
+    await user.click(replyButton)
+    expect(screen.queryByRole('textbox', { name: 'Reply to @commenter1' })).not.toBeInTheDocument()
+  })
+})

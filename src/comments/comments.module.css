@@ -54,6 +54,29 @@
   gap: 12px;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.replyButton {
+  padding: 4px 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.replyButton:hover {
+  color: var(--text);
+  background: var(--chip);
+}
+
 .formError {
   font-size: 12px;
   color: var(--muted);

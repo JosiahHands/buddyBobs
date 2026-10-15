@@ -26,11 +26,14 @@ function buildTree(comments: CommentView[]) {
 
 function CommentItem({ node, postId }: { node: CommentNode; postId: number }) {
   const dispatch = useAppDispatch()
+  const loggedIn = useAppSelector((state) => Boolean(state.auth.jwt))
+  const [replying, setReplying] = useState(false)
   const { comment, creator, counts } = node
 
   let content = comment.content
   if (comment.deleted) content = '[deleted]'
   if (comment.removed) content = '[removed]'
+  const canReply = loggedIn && !comment.deleted && !comment.removed
 
   return (
     <li>
@@ -39,11 +42,31 @@ function CommentItem({ node, postId }: { node: CommentNode; postId: number }) {
           @{creator.name} · {timeAgo(comment.published)}
         </p>
         <p className={styles.content}>{content}</p>
-        <Votes
-          score={counts.score}
-          myVote={node.my_vote}
-          onVote={(score) => dispatch(voteOnComment({ postId, commentId: comment.id, score })).unwrap()}
-        />
+        <div className={styles.actions}>
+          <Votes
+            score={counts.score}
+            myVote={node.my_vote}
+            onVote={(score) => dispatch(voteOnComment({ postId, commentId: comment.id, score })).unwrap()}
+          />
+          {canReply && (
+            <button
+              type="button"
+              className={styles.replyButton}
+              aria-expanded={replying}
+              onClick={() => setReplying(!replying)}
+            >
+              Reply
+            </button>
+          )}
+        </div>
+        {replying && (
+          <CommentForm
+            postId={postId}
+            parentId={comment.id}
+            label={`Reply to @${creator.name}`}
+            onDone={() => setReplying(false)}
+          />
+        )}
       </div>
       {node.replies.length > 0 && (
         <ul className={styles.replies}>
@@ -56,7 +79,16 @@ function CommentItem({ node, postId }: { node: CommentNode; postId: number }) {
   )
 }
 
-function CommentForm({ postId }: { postId: number }) {
+type CommentFormProps = {
+  postId: number
+  // Set when replying to a comment instead of the post
+  parentId?: number
+  label?: string
+  // Replies close their box once posted or cancelled
+  onDone?: () => void
+}
+
+function CommentForm({ postId, parentId, label = 'Add a comment', onDone }: CommentFormProps) {
   const dispatch = useAppDispatch()
   const loggedIn = useAppSelector((state) => Boolean(state.auth.jwt))
   const [content, setContent] = useState('')
@@ -70,8 +102,9 @@ function CommentForm({ postId }: { postId: number }) {
     setBusy(true)
     setError(null)
     try {
-      await dispatch(postComment({ postId, content: text })).unwrap()
+      await dispatch(postComment({ postId, content: text, parentId })).unwrap()
       setContent('')
+      onDone?.()
     } catch (err) {
       setError(actionError((err as Error).message))
     }
@@ -86,9 +119,11 @@ function CommentForm({ postId }: { postId: number }) {
         className={styles.input}
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        placeholder="Add a comment"
-        aria-label="Add a comment"
+        placeholder={label}
+        aria-label={label}
         rows={2}
+        // Replies open because the user just clicked Reply, so jump straight in
+        autoFocus={parentId !== undefined}
       />
       <div className={styles.formRow}>
         {error && (
@@ -96,8 +131,13 @@ function CommentForm({ postId }: { postId: number }) {
             {error}
           </span>
         )}
+        {onDone && (
+          <button type="button" className={styles.replyButton} onClick={onDone}>
+            Cancel
+          </button>
+        )}
         <button type="submit" className={styles.toggle} disabled={busy || !content.trim()}>
-          {busy ? 'Posting…' : 'Post'}
+          {busy ? 'Posting…' : parentId ? 'Post reply' : 'Post'}
         </button>
       </div>
     </form>

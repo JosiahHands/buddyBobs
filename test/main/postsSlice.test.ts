@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals'
-import { fetchHomePosts, fetchMorePosts, voteOnPost } from '../../src/main/postsSlice.ts'
+import { fetchHomePosts, fetchMorePosts, publishPost, voteOnPost } from '../../src/main/postsSlice.ts'
 import { postComment } from '../../src/comments/commentsSlice.ts'
 import { makeStore } from '../../src/store.ts'
 import { loggedIn, makeComment, makePost, mockFetch, requestTo } from '../testUtils.ts'
@@ -91,6 +91,26 @@ describe('voteOnPost', () => {
 
   it('needs a login', async () => {
     const result = await makeStore().dispatch(voteOnPost({ postId: 1, score: 1 }))
+    expect(result).toMatchObject({ error: { message: 'not_logged_in' } })
+  })
+})
+
+describe('publishPost', () => {
+  it('puts the new post at the top of the feed', async () => {
+    mockFetch((url) =>
+      url.includes('post/list')
+        ? { body: { posts: [makePost(1), makePost(2)] } }
+        : { body: { post_view: makePost(9, { name: 'My first post' }) } },
+    )
+    const store = makeStore(loggedIn())
+    await store.dispatch(fetchHomePosts())
+
+    await store.dispatch(publishPost({ community_id: 3, name: 'My first post' }))
+    expect(store.getState().posts.items.map((item) => item.post.id)).toEqual([9, 1, 2])
+  })
+
+  it('needs a login', async () => {
+    const result = await makeStore().dispatch(publishPost({ community_id: 3, name: 'Hi' }))
     expect(result).toMatchObject({ error: { message: 'not_logged_in' } })
   })
 })
