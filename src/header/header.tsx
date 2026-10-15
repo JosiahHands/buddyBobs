@@ -8,8 +8,8 @@ function Header({ children }: { children?: ReactNode }) {
     <header className={styles.header}>
       <div className={styles.top}>
         <a className={styles.brand} href="/">
-          <span className={styles.logo}>r</span>
-          <span className={styles.title}>Reddit Client</span>
+          <span className={styles.logo}>b</span>
+          <span className={styles.title}>BuddyBobs</span>
         </a>
         <ul className={styles.links}>
           {links.map((link) => (

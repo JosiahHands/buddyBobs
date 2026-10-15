@@ -3,7 +3,7 @@ import styles from './footer.module.css'
 function Footer() {
   return (
     <footer className={styles.footer}>
-      <p>Content from Reddit’s public JSON feeds. Not affiliated with Reddit.</p>
+      <p>Built on the Lemmy API. Not affiliated with Lemmy.</p>
     </footer>
   )
 }
