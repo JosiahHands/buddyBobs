@@ -1,0 +1,12 @@
+.aside {
+  padding: 40px 28px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}

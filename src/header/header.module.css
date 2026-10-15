@@ -1,0 +1,51 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  padding: 24px 16px 8px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 700;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.links {
+  display: flex;
+  gap: 32px;
+  padding-right: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.links a:hover {
+  color: var(--text);
+}

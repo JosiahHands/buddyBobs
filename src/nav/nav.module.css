@@ -1,0 +1,33 @@
+.nav {
+  padding: 12px 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.list {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.pill {
+  display: block;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.pill:hover {
+  color: var(--text);
+}
+
+.active,
+.active:hover {
+  background: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}

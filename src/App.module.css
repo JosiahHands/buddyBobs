@@ -1,0 +1,41 @@
+.app {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr) 180px;
+  grid-template-areas:
+    'header header header'
+    'ad main aside'
+    'footer footer footer';
+  gap: 28px 24px;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 16px;
+}
+
+.app > :nth-child(1) {
+  grid-area: header;
+}
+.app > :nth-child(2) {
+  grid-area: ad;
+}
+.app > :nth-child(3) {
+  grid-area: main;
+}
+.app > :nth-child(4) {
+  grid-area: aside;
+}
+.app > :nth-child(5) {
+  grid-area: footer;
+}
+
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'header'
+      'main'
+      'aside'
+      'ad'
+      'footer';
+    gap: 20px;
+  }
+}
