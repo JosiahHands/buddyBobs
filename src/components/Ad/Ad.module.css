@@ -1,0 +1,67 @@
+.ad {
+  place-self: start;
+  padding: 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.card {
+  display: block;
+  max-width: 360px;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.body {
+  padding: 10px;
+}
+
+.title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.text {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.small {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.button {
+  display: block;
+  margin-top: 10px;
+  padding: 6px 0;
+  border-radius: 4px;
+  background: #f7a21b;
+  color: #3b1f05;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.card:hover .button {
+  background: #ffb43a;
+}
+
+.domain {
+  margin-top: 6px;
+  color: var(--muted);
+  text-align: center;
+  font-size: 11px;
+}

@@ -1,0 +1,105 @@
+.post {
+  padding: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.avatar {
+  flex: none;
+  border-radius: 50%;
+}
+
+.name {
+  min-width: 0;
+  color: var(--text);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.handle {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.text {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 480px;
+  margin: 8px 0;
+  object-fit: contain;
+  background: var(--panel);
+  border-radius: 8px;
+}
+
+.link {
+  display: flex;
+  flex-direction: column;
+  margin: 8px 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.link:hover {
+  background: var(--panel);
+}
+
+.linkThumb {
+  display: block;
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+}
+
+.linkBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+}
+
+.linkTitle {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.linkText {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.linkDomain {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stats {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}

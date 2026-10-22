@@ -1,0 +1,59 @@
+.main {
+  padding: 24px 12px;
+  background: var(--panel-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.subtitle {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.control {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 999px;
+  background: var(--chip);
+  color: var(--muted);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.control:hover {
+  color: var(--text);
+}
+
+.control:disabled {
+  color: var(--muted);
+  cursor: default;
+}
+
+.more {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.feed {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}

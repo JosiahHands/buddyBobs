@@ -1,0 +1,119 @@
+.aside {
+  align-self: start;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 13px;
+}
+
+/* Bluesky's brand gradient, from their social card. */
+.banner {
+  display: grid;
+  place-items: center;
+  height: 96px;
+  background: linear-gradient(180deg, #1083fe 0%, #57b6ff 100%);
+}
+
+.butterfly {
+  width: 52px;
+  height: 52px;
+  background: #fff;
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  transition: transform 0.2s ease;
+}
+
+.banner:hover .butterfly {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .butterfly {
+    transition: none;
+  }
+}
+
+.body {
+  padding: 16px;
+}
+
+.label {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.name {
+  margin-top: 2px;
+  color: #1083fe;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+@media (prefers-color-scheme: dark) {
+  .name {
+    color: #57b6ff;
+  }
+}
+
+.text {
+  margin-top: 8px;
+  line-height: 1.45;
+}
+
+.note {
+  margin-top: 12px;
+  color: var(--muted);
+}
+
+.stats {
+  margin: 14px 0 0;
+  padding-top: 7px;
+  border-top: 1px solid var(--border);
+}
+
+.stats div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  column-gap: 8px;
+  padding: 3px 0;
+}
+
+.stats dt {
+  color: var(--muted);
+}
+
+.stats dd {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.links {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.links a,
+.credit a {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.links a:hover,
+.credit a:hover {
+  color: var(--muted);
+}
+
+.credit {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
